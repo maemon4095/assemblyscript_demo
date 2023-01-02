@@ -9,6 +9,20 @@
     <div class="tabbed-menu" style="width: 100%; height: 100%;">
         <div id="tscontainer" data-tab-focus="focused" data-tabname="typescript"></div>
         <div id="ascontainer" data-tabname="assemblyscript"></div>
+        <div data-tabname="1"></div>
+        <div data-tabname="2">
+            <button onclick="window.open(window.location.href, 'popup', 'popup')">link</button>
+        </div>
+        <div data-tabname="3"></div>
+        <div data-tabname="4"></div>
+        <div data-tabname="5"></div>
+        <div data-tabname="6"></div>
+        <div data-tabname="7"></div>
+        <div data-tabname="8"></div>
+        <div data-tabname="9"></div>
+        <div data-tabname="10"></div>
+        <div data-tabname="11"></div>
+        <div data-tabname="12"></div>
     </div>
 </body>
 <script src="./saveState.js"></script>
@@ -18,6 +32,7 @@
 <script src="./globalDB.js"></script>
 <script src="./index.js"></script>
 <script src="./tab.js"></script>
+<script src="./betterScroll.js"></script>
 <!--
     <script>
         const result = ts.transpile("function add(x: number, y: number): number { return x + y; }");
