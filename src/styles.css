@@ -12,6 +12,15 @@
     margin: 0;
 }
 
+html,
+body {
+    display: grid;
+    place-items: stretch;
+    width: 100%;
+    height: 100%;
+    background-color: var(--editor-background);
+}
+
 button {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -20,21 +29,28 @@ button {
     outline: none;
 }
 
-html {
+.tabbed-menu {
     display: grid;
-    place-items: stretch;
-    width: 100%;
-    height: 100%;
+    grid-template:
+        "tabbar" auto
+        "main" 1fr / 1fr;
+}
+
+
+.tabbed-menu-tab-content {
+    grid-area: main;
+    display: grid;
+    grid-auto-rows: 1fr;
+    grid-auto-columns: 1fr;
+}
+
+.tabbed-menu-tab-content>* {
     overflow: hidden;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--editor-background);
-}
-
 .tabbed-menu-tabbar {
+    grid-area: tabbar;
+    display: flex;
     background-color: var(--menu-background);
 }
 
@@ -49,8 +65,4 @@ body {
 
 .tabbed-menu-tabbar>*[data-tab-focus="focused"] {
     background: var(--editor-background);
-}
-
-.tabbed-menu>* {
-    overflow: hidden;
 }

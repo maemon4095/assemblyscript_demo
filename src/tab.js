@@ -1,5 +1,4 @@
 // @ts-check
-const common_style_element_id = 'tabbed-menu-common-style';
 const tab_focused_attribute = 'data-tab-focus';
 const tabbar_class = 'tabbed-menu-tabbar';
 const tab_label_class = 'tabbed-menu-tab-label';
@@ -41,11 +40,16 @@ define(() => {
             return this.#tabs.tab(this.#selectedIndex);
         }
 
+        get selectedIndex() {
+            return this.#selectedIndex < 0 ? undefined : this.#selectedIndex;
+        }
+
         /** @param {number} index */
         select(index) {
             const old = this.selected;
+            const oldIndex = this.#selectedIndex;
             this.#selectedIndex = index >= this.#tabs.count ? -1 : index;
-            this.dispatchEvent(new TabSelectEvent(this.selected, old));
+            this.dispatchEvent(new TabSelectEvent(this.selected, this.#selectedIndex, old, oldIndex));
         }
 
         clearSelect() {
@@ -165,22 +169,33 @@ define(() => {
         }
         #tab;
         #oldTab;
-
+        #index;
+        #oldIndex;
         /**
-         * @param {Tab|null} tab
-         * @param {Tab|null} oldTab
+         * @param {Tab | null} tab
+         * @param {Tab | null} oldTab
+         * @param {number} index
+         * @param {number} oldIndex
          */
-        constructor(tab, oldTab) {
+        constructor(tab, index, oldTab, oldIndex) {
             super(TabSelectEvent.TYPE);
             this.#tab = tab;
             this.#oldTab = oldTab;
+            this.#index = index;
+            this.#oldIndex = oldIndex;
         }
 
         get tab() {
             return this.#tab;
         }
+        get index() {
+            return this.#index;
+        }
         get oldTab() {
             return this.#oldTab;
+        }
+        get oldIndex() {
+            return this.#oldIndex;
         }
     }
 
@@ -294,15 +309,6 @@ define(() => {
      * @returns {TabbedMenu}
      */
     function create(element, options = { collectChildren: false }) {
-        const createWrapperEl = () => {
-            const elem = document.createElement('div');
-            elem.style.gridArea = "main";
-            elem.style.display = 'grid';
-            elem.style.gridAutoColumns = "1fr";
-            elem.style.gridAutoRows = "1fr";
-            return elem;
-        };
-
         const tabs = new TabCollection();
         let selected = -1;
         let index = 0;
@@ -324,18 +330,19 @@ define(() => {
         const tabbarEl = document.createElement('div');
         tabbarEl.classList.add(tabbar_class);
         element.append(tabbarEl);
-        const contentEl = createWrapperEl();
+        const contentEl = document.createElement('div');
         contentEl.classList.add(tab_content_class);
         element.append(contentEl);
 
-        const onTabContentChanged = (/** @type {Element | null | undefined} */ content,/** @type {Element | null} */ _oldContent) => {
+        const onSelectedTabContentChanged = (/** @type {Element | null | undefined} */ content) => {
             contentEl.innerHTML = '';
             if (!content) return;
             contentEl.append(content);
         };
 
         const onTabInsert = (/** @type {number} */ index, /** @type {Tab} */ tab) => {
-            const labelEl = createWrapperEl();
+            const labelEl = document.createElement('div');
+            labelEl.classList.add(tab_label_class);
             labelEl.addEventListener('click', () => {
                 menu.select(index);
             });
@@ -348,8 +355,9 @@ define(() => {
             });
 
             tab.addEventListener(TabContentChangedEvent.TYPE, e => {
+                if (menu.selected !== tab) return;
                 const { content, oldContent } = /** @type {TabContentChangedEvent} */ (e);
-                onTabContentChanged(content, oldContent);
+                onSelectedTabContentChanged(content);
             });
         };
 
@@ -359,8 +367,10 @@ define(() => {
             removed.removeEventListener(TabContentChangedEvent.TYPE, null);
         };
 
-        const onTabSelect = (/** @type {Tab | null} */ tab,/** @type {Tab | null} */ _) => {
-            onTabContentChanged(tab?.content);
+        const onTabSelect = (/** @type {Tab | null} */ tab, /** @type {number | undefined} */ index, /** @type {number | undefined} */ oldIndex) => {
+            tabbarEl.children[oldIndex ?? -1]?.setAttribute(tab_focused_attribute, 'none');
+            tabbarEl.children[index ?? -1]?.setAttribute(tab_focused_attribute, 'focused');
+            onSelectedTabContentChanged(tab?.content);
         };
 
         index = 0;
@@ -369,7 +379,7 @@ define(() => {
             onTabInsert(index, tab);
             index++;
         }
-        onTabSelect(menu.selected, null);
+        onTabSelect(menu.selected, menu.selectedIndex);
 
         menu.addEventListener(TabInsertEvent.TYPE, (e) => {
             const { index, tab } = /** @type {TabInsertEvent} */(e);
@@ -380,8 +390,8 @@ define(() => {
             onTabRemove(index, removed);
         });
         menu.addEventListener(TabSelectEvent.TYPE, (e) => {
-            const { tab, oldTab } = /** @type {TabSelectEvent} */(e);
-            onTabSelect(tab, oldTab);
+            const { tab, index, oldIndex } = /** @type {TabSelectEvent} */(e);
+            onTabSelect(tab, index, oldIndex);
         });
 
         return menu;

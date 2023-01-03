@@ -1,21 +1,14 @@
 <!DOCTYPE html>
-<style>
-    * {
-        box-sizing: border-box;
-    }
 
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
-</style>
+<head>
+    <link href="./src/styles.css" rel="stylesheet">
+</head>
 <html>
 
 <body>
+    <div id="menu">
 
+    </div>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
@@ -31,7 +24,7 @@
 <script>
     require(['src/tab', "vs/editor/editor.main"], (tab, monaco) => {
         console.log(tab);
-        const menu = tab.create(document.body);
+        const menu = tab.create(document.getElementById('menu'));
 
         const options = {
             automaticLayout: true,
@@ -50,8 +43,11 @@
             value: "1",
             ...options,
         });
+        const button = document.createElement('button');
+        button.onclick = () => { menu.clearSelect(); };
         menu.tabs.append(new tab.Tab("0", container0));
         menu.tabs.append(new tab.Tab("1", container1));
+        menu.tabs.append(new tab.Tab('button', button));
         menu.select(0);
         console.log(menu);
         console.log(menu.selected);
