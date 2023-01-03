@@ -375,7 +375,6 @@ define(() => {
 
         index = 0;
         for (const tab of menu.tabs) {
-            console.log(tab);
             onTabInsert(index, tab);
             index++;
         }

@@ -19,6 +19,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: var(--editor-background);
+    overflow: hidden;
 }
 
 button {
@@ -52,6 +53,7 @@ button {
     grid-area: tabbar;
     display: flex;
     background-color: var(--menu-background);
+    overflow: hidden;
 }
 
 .tabbed-menu-tabbar>* {

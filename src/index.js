@@ -1,8 +1,5 @@
-
-require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs" } });
-
 let tseditor, aseditor;
-require(["vs/editor/editor.main"], (monaco) => {
+require(['tab', "vs/editor/editor.main"], (tab, monaco) => {
     const options = {
         automaticLayout: true,
         theme: "vs-dark",
@@ -21,4 +18,6 @@ require(["vs/editor/editor.main"], (monaco) => {
         model,
         ...options,
     });
+
+    const menu = tab.create(document.getElementById('menu'), { collectChildren: true });
 });
