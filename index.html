@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<html>
+
+<body>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
+    integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    require.config({
+        paths: {
+            vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs"
+        }
+    });
+</script>
+<script>
+    require(['src/tab', "vs/editor/editor.main"], (tab, monaco) => {
+        console.log(tab);
+        const menu = tab.create(document.body);
+
+        const options = {
+            automaticLayout: true,
+            theme: "vs-dark",
+            minimap: {
+                enabled: false,
+            }
+        };
+        const container0 = document.createElement('div');
+        monaco.editor.create(container0, {
+            value: "0",
+            ...options,
+        });
+        const container1 = document.createElement('div');
+        monaco.editor.create(container1, {
+            value: "1",
+            ...options,
+        });
+        menu.tabs.append(new tab.Tab("0", container0));
+        menu.tabs.append(new tab.Tab("1", container1));
+        menu.select(0);
+        console.log(menu);
+        console.log(menu.selected);
+    });
+</script>
+
+</html>
