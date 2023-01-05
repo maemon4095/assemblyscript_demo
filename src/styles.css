@@ -2,8 +2,11 @@
     --editor-background: #1e1e1e;
     --editor-forground: #d4d4d4;
     --menu-background: #252526;
+    --menu-active-background: var(--editor-background);
     --menu-forground: #cccccc;
     --menu-inactive: #2d2d2d;
+    --menu-scrollbar-thumb: #444;
+    --menu-overlay-shadow: black;
 }
 
 * {
@@ -30,41 +33,55 @@ button {
     outline: none;
 }
 
-.tabbed-menu {
+#menu {
     display: grid;
     grid-template:
         "tabbar" auto
         "main" 1fr / 1fr;
 }
 
-
-.tabbed-menu-tab-content {
+#main {
     grid-area: main;
     display: grid;
-    grid-auto-rows: 1fr;
-    grid-auto-columns: 1fr;
+    place-items: stretch;
 }
 
-.tabbed-menu-tab-content>* {
-    overflow: hidden;
+.tabbar:hover {
+    overflow: overlay;
 }
 
-.tabbed-menu-tabbar {
+.tabbar {
     grid-area: tabbar;
     display: flex;
     background-color: var(--menu-background);
     overflow: hidden;
+    box-shadow: 0px 0.2em 0.5em 0.1em var(--menu-overlay-shadow);
 }
 
-.tabbed-menu-tabbar>* {
+.tabbar>.reorderable-list-element>*[data-tab-state='selected'] {
+    background-color: var(--menu-active-background) !important;
+}
+
+.tabbar>.reorderable-list-element>* {
     padding: 0.5em 1em;
     flex: none;
     background: var(--menu-inactive);
     border-right: solid 1px var(--menu-background);
     color: var(--menu-forground);
     min-width: 4rem;
+    user-select: none;
+    cursor: pointer;
 }
 
-.tabbed-menu-tabbar>*[data-tab-focus="focused"] {
-    background: var(--editor-background);
+.tabbar::-webkit-scrollbar {
+    background-color: transparent;
+}
+
+.tabbar::-webkit-scrollbar:horizontal {
+    background-color: transparent;
+    height: 0.4em;
+}
+
+.tabbar::-webkit-scrollbar-thumb {
+    background: var(--menu-scrollbar-thumb);
 }

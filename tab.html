@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<style>
+    :root {
+        --editor-background: #1e1e1e;
+        --editor-forground: #d4d4d4;
+        --menu-background: #252526;
+        --menu-active-background: var(--editor-background);
+        --menu-forground: #cccccc;
+        --menu-inactive: #2d2d2d;
+        --menu-scrollbar-thumb: #444;
+        --menu-overlay-shadow: black;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: grid;
+        place-items: stretch;
+        background-color: var(--editor-background);
+    }
+
+    #menu {
+        display: grid;
+        grid-template:
+            "tabbar" auto
+            "main" 1fr / 1fr;
+    }
+
+    #menu>.selectable-pane {
+        grid-area: main;
+        display: grid;
+        place-items: stretch;
+    }
+
+    .tabbar:hover {
+        overflow: overlay;
+    }
+
+    .tabbar {
+        grid-area: tabbar;
+        display: flex;
+        background-color: var(--menu-background);
+        overflow: hidden;
+        box-shadow: 0px 0.2em 0.5em 0.1em var(--menu-overlay-shadow);
+    }
+
+    .tabbar>.reorderable-list-element>*[data-tab-state='selected'] {
+        background-color: var(--menu-active-background) !important;
+    }
+
+    .tabbar>.reorderable-list-element>* {
+        padding: 0.5em 1em;
+        flex: none;
+        background: var(--menu-inactive);
+        border-right: solid 1px var(--menu-background);
+        color: var(--menu-forground);
+        min-width: 4rem;
+        user-select: none;
+        cursor: pointer;
+    }
+
+    .tabbar::-webkit-scrollbar {
+        background-color: transparent;
+    }
+
+    .tabbar::-webkit-scrollbar:horizontal {
+        background-color: transparent;
+        height: 0.4em;
+    }
+
+    .tabbar::-webkit-scrollbar-thumb {
+        background: var(--menu-scrollbar-thumb);
+    }
+</style>
+
+<body>
+    <div id="menu">
+        <div id="tscontainer" data-tab-label="typescript"></div>
+        <div id="ascontainer" data-tab-label="assemblyscript"></div>
+        <div data-tab-label="1"></div>
+        <div data-tab-label="2">
+            <button onclick="window.open(window.location.href, 'popup', 'popup')">link</button>
+        </div>
+        <div data-tab-label="3"></div>
+        <div data-tab-label="4"></div>
+        <div data-tab-label="5"></div>
+        <div data-tab-label="6"></div>
+        <div data-tab-label="7"></div>
+        <div data-tab-label="8"></div>
+        <div data-tab-label="9"></div>
+        <div data-tab-label="10"></div>
+        <div data-tab-label="11"></div>
+        <div data-tab-label="12"></div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"
+    integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    require.config({
+        paths: {
+            vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs",
+        }
+    });
+
+</script>
+<script>
+    require(["vs/editor/editor.main", 'src/selectablePane', 'src/reorderableList'], (monaco, pane, list) => {
+        const options = {
+            automaticLayout: true,
+            theme: "vs-dark",
+            minimap: {
+                enabled: false,
+            }
+        };
+        const model = monaco.editor.createModel("console.log(4)", "typescript");
+        monaco.editor.create(document.getElementById('tscontainer'), {
+            model,
+            ...options,
+        });
+        monaco.editor.create(document.getElementById('ascontainer'), {
+            model,
+            ...options,
+        });
+
+
+        const menu = document.getElementById('menu');
+        const children = [...menu.children];
+        menu.innerHTML = '';
+
+        const tabbar = document.createElement('div');
+        tabbar.classList.add('tabbar');
+        list.create(tabbar);
+        const container = document.createElement('div');
+        const selectable = pane.create(container);
+
+        let lastSelected = null;
+        for (const child of children) {
+            const id = selectable.add(child);
+            const labelText = child.getAttribute('data-tab-label');
+            const label = document.createElement('div');
+            label.textContent = labelText;
+            label.classList.add('tabbar-tab-label');
+            label.dataset.paneId = id;
+            label.addEventListener('pointerdown', (event) => {
+                const id = event.target.getAttribute('data-pane-id');
+                container.setAttribute('data-selected-pane-id', id);
+                lastSelected?.setAttribute('data-tab-state', 'none');
+                label.setAttribute('data-tab-state', 'selected');
+                lastSelected = label;
+            });
+            tabbar.append(label);
+        }
+        tabbar.addEventListener('wheel', (event) => {
+            tabbar.scrollBy(event.deltaY, event.deltaX);
+        });
+
+        menu.append(tabbar, container);
+    });
+</script>
+
+</html>
