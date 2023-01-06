@@ -7,6 +7,8 @@
     --menu-inactive: #2d2d2d;
     --menu-scrollbar-thumb: #444;
     --menu-overlay-shadow: black;
+    --menu-contextmenu-background: #3c3c3c;
+    --menu-contextmenu-forground: #fff;
 }
 
 * {
@@ -31,6 +33,7 @@ button {
     appearance: none;
     border: none;
     outline: none;
+    touch-action: manipulation;
 }
 
 #menu {
@@ -84,4 +87,10 @@ button {
 
 .tabbar::-webkit-scrollbar-thumb {
     background: var(--menu-scrollbar-thumb);
+}
+
+.contextmenu-container {
+    padding: 1em;
+    background-color: var(--menu-contextmenu-background);
+    color: var(--menu-contextmenu-forground);
 }

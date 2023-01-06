@@ -1,4 +1,4 @@
-require(["vs/editor/editor.main", 'selectablePane', 'reorderableList'], (monaco, pane, list) => {
+require(["vs/editor/editor.main", 'selectablePane', 'reorderableList', 'contextmenu'], (monaco, pane, list, contextmenu) => {
     const options = {
         automaticLayout: true,
         theme: "vs-dark",
@@ -33,16 +33,26 @@ require(["vs/editor/editor.main", 'selectablePane', 'reorderableList'], (monaco,
     for (const child of children) {
         const id = selectable.add(child);
         const labelText = child.getAttribute('data-tab-label');
-        const label = document.createElement('div');
+        const label = document.createElement('button');
+        label.style.fontSize = `1em`;
         label.textContent = labelText;
         label.classList.add('tabbar-tab-label');
         label.dataset.paneId = id;
         label.addEventListener('pointerdown', (event) => {
+            if (event.button !== 0) {
+                return;
+            }
             const id = event.target.getAttribute('data-pane-id');
             container.setAttribute('data-selected-pane-id', id);
             lastSelected?.setAttribute('data-tab-state', 'none');
             label.setAttribute('data-tab-state', 'selected');
             lastSelected = label;
+        });
+        label.addEventListener('contextmenu', (event) => {
+            const menu = document.createElement('div');
+            menu.textContent = 'aaa';
+            contextmenu.display(event.clientX, event.clientY, menu, { originX: 0.5 });
+            event.preventDefault();
         });
         tabbar.append(label);
     }
