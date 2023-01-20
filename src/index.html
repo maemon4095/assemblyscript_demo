@@ -3,12 +3,13 @@
 
 <head>
     <link href="./styles.css" rel="stylesheet">
+    <link href="./js/contextmenu-style-layout.css" rel="stylesheet">
 </head>
 
 <body>
     <div id="menu">
-        <div id="tscontainer" data-tab-focus="focused" data-tab-label="typescript"></div>
-        <div id="ascontainer" data-tab-label="assemblyscript"></div>
+        <div id="tscontainer" class="editor-container" data-tab-focus="focused" data-tab-label="typescript"></div>
+        <div id="ascontainer" class="editor-container" data-tab-label="assemblyscript"></div>
         <div data-tab-label="1"></div>
         <div data-tab-label="2">
             <button onclick="window.open(window.location.href, 'popup', 'popup')">link</button>
@@ -33,16 +34,10 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="config.js"></script>
 <script src="./index.js"></script>
-<!--
-    <script src="./saveState.js"></script>
-    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
-    <script src="./globalDB.js"></script>
--->
 
 <script>
     const result = ts.transpile("function add(x: number, y: number): number { return x + y; }");
     console.log(result);
 </script>
-
 
 </html>
